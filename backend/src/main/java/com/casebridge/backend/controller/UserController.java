@@ -5,6 +5,7 @@ import com.casebridge.backend.repository.UserRepository;
 import com.casebridge.backend.security.JwtUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -23,6 +24,8 @@ public class UserController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    // REGISTER USER
+
     @PostMapping
     public User createUser(
             @RequestBody User user
@@ -31,15 +34,19 @@ public class UserController {
         return userRepository.save(user);
     }
 
+    // GET ALL USERS
+
     @GetMapping
-    public Object getUsers() {
+    public List<User> getUsers() {
 
         return userRepository.findAll();
     }
 
+    // LOGIN USER
+
     @PostMapping("/login")
 
-    public Object login(
+    public ResponseEntity<?> login(
             @RequestBody User loginUser
     ) {
 
@@ -49,45 +56,57 @@ public class UserController {
                                 loginUser.getEmail()
                         );
 
-        if(
+        // USER NOT REGISTERED
 
-                user != null
+        if(user == null) {
 
-                &&
-
-                user.getPassword().equals(
-                        loginUser.getPassword()
-                )
-
-        ) {
-
-            String token =
-                    jwtUtil.generateToken(
-                            user.getEmail()
-                    );
-
-            Map<String, String> response =
-                    new HashMap<>();
-
-            response.put(
-                    "token",
-                    token
-            );
-
-            response.put(
-                    "role",
-                    user.getRole()
-            );
-
-            return response;
+            return ResponseEntity
+                    .badRequest()
+                    .body("Please Register First");
         }
 
-        return "Invalid Credentials";
+        // WRONG PASSWORD
+
+        if(!user.getPassword().equals(
+                loginUser.getPassword()
+        )) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body("Invalid Password");
+        }
+
+        // SUCCESS LOGIN
+
+        String token =
+                jwtUtil.generateToken(
+                        user.getEmail()
+                );
+
+        Map<String, String> response =
+                new HashMap<>();
+
+        response.put(
+                "token",
+                token
+        );
+
+        response.put(
+                "role",
+                user.getRole()
+        );
+
+        return ResponseEntity.ok(response);
     }
+
+    // DELETE USER
+
     @DeleteMapping("/{id}")
-public void deleteUser(
-        @PathVariable Long id
-) {
-    userRepository.deleteById(id);
-}
+
+    public void deleteUser(
+            @PathVariable Long id
+    ) {
+
+        userRepository.deleteById(id);
+    }
 }
