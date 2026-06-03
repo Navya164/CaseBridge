@@ -15,6 +15,8 @@ import AnalyticsDashboard from './pages/AnalyticsDashboard';
 import OfficerDashboard from './pages/OfficerDashboard';
 import ManageUsers from './pages/ManageUsers';
 import AssignOfficer from './pages/AssignOfficer';
+import PermissionManagement from './pages/PermissionManagement';
+import AdminPermission from './pages/AdminPermission';
 
 function App() {
 
@@ -111,6 +113,27 @@ function App() {
     element={
         token && role === 'ADMIN'
         ? <AssignOfficer />
+        : <Navigate to="/" />
+    }
+/>
+<Route
+
+    path="/permissions"
+
+    element={
+
+        token && role === 'ADMIN'
+
+        ? <PermissionManagement />
+
+        : <Navigate to="/" />
+    }
+/>
+<Route
+    path="/permissions"
+    element={
+        token && role === 'ADMIN'
+        ? <AdminPermission />
         : <Navigate to="/" />
     }
 />

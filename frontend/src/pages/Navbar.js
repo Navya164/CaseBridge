@@ -8,6 +8,7 @@ import {
 function Navbar() {
 
     const token = localStorage.getItem('token');
+
     const role = localStorage.getItem('role');
 
     const navigate = useNavigate();
@@ -15,9 +16,11 @@ function Navbar() {
     const logout = () => {
 
         localStorage.removeItem('token');
+
         localStorage.removeItem('role');
 
         navigate('/');
+
         window.location.reload();
     };
 
@@ -32,15 +35,22 @@ function Navbar() {
             <div>
 
                 {
+
                     !token ? (
 
                         <>
 
-                            <Link to="/" style={styles.link}>
+                            <Link
+                                to="/"
+                                style={styles.link}
+                            >
                                 Login
                             </Link>
 
-                            <Link to="/register" style={styles.link}>
+                            <Link
+                                to="/register"
+                                style={styles.link}
+                            >
                                 Register
                             </Link>
 
@@ -50,8 +60,12 @@ function Navbar() {
 
                         <>
 
+                            {/* USER */}
+
                             {
+
                                 role === 'USER' && (
+
                                     <>
 
                                         <Link
@@ -62,11 +76,16 @@ function Navbar() {
                                         </Link>
 
                                     </>
+
                                 )
                             }
 
+                            {/* OFFICER */}
+
                             {
+
                                 role === 'OFFICER' && (
+
                                     <>
 
                                         <Link
@@ -77,11 +96,16 @@ function Navbar() {
                                         </Link>
 
                                     </>
+
                                 )
                             }
 
+                            {/* ADMIN */}
+
                             {
+
                                 role === 'ADMIN' && (
+
                                     <>
 
                                         <Link
@@ -98,7 +122,15 @@ function Navbar() {
                                             Analytics
                                         </Link>
 
+                                        <Link
+                                            to="/permissions"
+                                            style={styles.link}
+                                        >
+                                            Permissions
+                                        </Link>
+
                                     </>
+
                                 )
                             }
 
@@ -145,7 +177,8 @@ const styles = {
         color:'white',
         marginRight:'25px',
         fontSize:'17px',
-        fontWeight:'600'
+        fontWeight:'600',
+        textDecoration:'none'
     },
 
     logout:{
@@ -154,7 +187,8 @@ const styles = {
         color:'white',
         padding:'10px 18px',
         borderRadius:'8px',
-        fontWeight:'bold'
+        fontWeight:'bold',
+        cursor:'pointer'
     }
 };
 
