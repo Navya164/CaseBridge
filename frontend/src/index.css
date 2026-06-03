@@ -1,0 +1,37 @@
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body{
+
+  background: linear-gradient(
+    to right,
+    #bf97c5,
+    #f8fafc
+  );
+
+  min-height:100vh;
+
+  color:#0f172a;
+}
+
+a{
+  text-decoration:none;
+}
+
+button{
+
+  cursor:pointer;
+
+  transition:0.3s;
+}
+
+button:hover{
+
+  transform:scale(1.03);
+
+  opacity:0.95;
+}
