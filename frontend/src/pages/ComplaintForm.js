@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import axios from 'axios';
+import { getUserPermissions } from '../utils/permissionUtils';
+import { hasPermission } from '../utils/permissionUtils';
 
 function ComplaintForm() {
 
@@ -11,6 +13,28 @@ function ComplaintForm() {
     });
 
     const [file, setFile] = useState(null);
+    const [permissions, setPermissions] = useState([]);
+
+    useEffect(() => {
+
+    loadPermissions();
+
+}, []);
+
+const loadPermissions = async () => {
+
+    try {
+
+        const data =
+            await getUserPermissions();
+
+        setPermissions(data);
+
+    } catch(error) {
+
+        console.log(error);
+    }
+};
 
     const handleChange = (e) => {
 
@@ -251,6 +275,79 @@ function ComplaintForm() {
                         }
 
                     </div>
+                    <div
+    style={{
+        marginBottom:'20px',
+        display:'flex',
+        gap:'10px',
+        flexWrap:'wrap'
+    }}
+>
+
+{
+    hasPermission(
+        permissions,
+        'DOWNLOAD_REPORT'
+    ) && (
+
+        <button
+            type="button"
+            style={{
+                padding:'10px 15px',
+                background:'#22c55e',
+                color:'white',
+                border:'none',
+                borderRadius:'8px'
+            }}
+        >
+            Download Report
+        </button>
+    )
+}
+
+{
+    hasPermission(
+        permissions,
+        'PRINT_REPORT'
+    ) && (
+
+        <button
+            type="button"
+            style={{
+                padding:'10px 15px',
+                background:'#3b82f6',
+                color:'white',
+                border:'none',
+                borderRadius:'8px'
+            }}
+        >
+            Print Report
+        </button>
+    )
+}
+
+{
+    hasPermission(
+        permissions,
+        'TEST_MODULE'
+    ) && (
+
+        <button
+            type="button"
+            style={{
+                padding:'10px 15px',
+                background:'#f59e0b',
+                color:'white',
+                border:'none',
+                borderRadius:'8px'
+            }}
+        >
+            Test Module
+        </button>
+    )
+}
+
+</div>
 
                     {/* BUTTON */}
 
@@ -273,6 +370,8 @@ function ComplaintForm() {
                         Submit Complaint
 
                     </button>
+
+                    
 
                 </form>
 

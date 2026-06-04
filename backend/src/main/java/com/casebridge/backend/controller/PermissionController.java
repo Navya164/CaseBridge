@@ -88,13 +88,23 @@ public class PermissionController {
 
     @GetMapping("/user/{userId}")
 
-    public List<UserPermission> getUserPermissions(
-            @PathVariable Long userId
-    ) {
+public List<String> getUserPermissions(
+        @PathVariable Long userId
+) {
 
-        return userPermissionRepository
-                .findByUserIdAndActiveTrue(userId);
-    }
+    List<UserPermission> permissions =
+            userPermissionRepository
+                    .findByUserIdAndActiveTrue(userId);
+
+    return permissions.stream()
+
+            .map(p ->
+                    p.getPermission()
+                            .getPermissionName()
+            )
+
+            .toList();
+}
 
     // REVOKE PERMISSION
 
