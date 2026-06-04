@@ -36,6 +36,10 @@ function Login() {
                 'role',
                 response.data.role
             );
+            localStorage.setItem(
+    'userId',
+    response.data.userId
+);
 
             alert('Login Successful');
 
@@ -54,10 +58,13 @@ function Login() {
 
         } catch(error) {
 
-            console.log(error);
+    console.log(error);
 
-            alert('Invalid Credentials');
-        }
+    alert(
+        error.response?.data ||
+        'Login Failed'
+    );
+}
     };
 
     return (

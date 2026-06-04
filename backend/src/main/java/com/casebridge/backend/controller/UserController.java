@@ -46,58 +46,63 @@ public class UserController {
 
     @PostMapping("/login")
 
-    public ResponseEntity<?> login(
-            @RequestBody User loginUser
-    ) {
+public ResponseEntity<?> login(
+        @RequestBody User loginUser
+) {
 
-        User user =
-                userRepository
-                        .findByEmail(
-                                loginUser.getEmail()
-                        );
+    User user =
+            userRepository
+                    .findByEmail(
+                            loginUser.getEmail()
+                    );
 
-        // USER NOT REGISTERED
+    // USER NOT REGISTERED
 
-        if(user == null) {
+    if(user == null) {
 
-            return ResponseEntity
-                    .badRequest()
-                    .body("Please Register First");
-        }
-
-        // WRONG PASSWORD
-
-        if(!user.getPassword().equals(
-                loginUser.getPassword()
-        )) {
-
-            return ResponseEntity
-                    .badRequest()
-                    .body("Invalid Password");
-        }
-
-        // SUCCESS LOGIN
-
-        String token =
-                jwtUtil.generateToken(
-                        user.getEmail()
-                );
-
-        Map<String, String> response =
-                new HashMap<>();
-
-        response.put(
-                "token",
-                token
-        );
-
-        response.put(
-                "role",
-                user.getRole()
-        );
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity
+                .badRequest()
+                .body("Please Register First");
     }
+
+    // WRONG PASSWORD
+
+    if(!user.getPassword().equals(
+            loginUser.getPassword()
+    )) {
+
+        return ResponseEntity
+                .badRequest()
+                .body("Invalid Password");
+    }
+
+    // SUCCESS LOGIN
+
+    String token =
+            jwtUtil.generateToken(
+                    user.getEmail()
+            );
+
+    Map<String, String> response =
+            new HashMap<>();
+
+    response.put(
+            "token",
+            token
+    );
+
+    response.put(
+            "role",
+            user.getRole()
+    );
+
+    response.put(
+            "userId",
+            String.valueOf(user.getId())
+    );
+
+    return ResponseEntity.ok(response);
+}
 
     // DELETE USER
 
