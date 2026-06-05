@@ -7,6 +7,7 @@ import com.casebridge.backend.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,16 +24,26 @@ public class UserController {
 
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+private PasswordEncoder passwordEncoder;
 
     // REGISTER USER
 
     @PostMapping
-    public User createUser(
-            @RequestBody User user
-    ) {
 
-        return userRepository.save(user);
-    }
+public User createUser(
+        @RequestBody User user
+) {
+
+    user.setPassword(
+
+            passwordEncoder.encode(
+                    user.getPassword()
+            )
+    );
+
+    return userRepository.save(user);
+}
 
     // GET ALL USERS
 
@@ -67,14 +78,21 @@ public ResponseEntity<?> login(
 
     // WRONG PASSWORD
 
-    if(!user.getPassword().equals(
-            loginUser.getPassword()
-    )) {
+    if(
 
-        return ResponseEntity
-                .badRequest()
-                .body("Invalid Password");
-    }
+        !passwordEncoder.matches(
+
+                loginUser.getPassword(),
+
+                user.getPassword()
+        )
+
+)
+{
+    return ResponseEntity
+            .badRequest()
+            .body("Invalid Password");
+}
 
     // SUCCESS LOGIN
 
