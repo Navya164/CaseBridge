@@ -18,55 +18,58 @@ function Login() {
 
     const handleLogin = async (e) => {
 
-        e.preventDefault();
+    e.preventDefault();
 
-        try {
+    try {
 
-            const response = await axios.post(
-                'http://localhost:8080/api/users/login',
-                loginData
-            );
+        const response = await axios.post(
+            'http://localhost:8080/api/users/login',
+            loginData
+        );
 
-            localStorage.setItem(
-                'token',
-                response.data.token
-            );
+        console.log("LOGIN RESPONSE:");
+        console.log(response.data);
 
-            localStorage.setItem(
-                'role',
-                response.data.role
-            );
-            localStorage.setItem(
-    'userId',
-    response.data.userId
-);
+        localStorage.setItem(
+            'token',
+            response.data.token
+        );
 
-            alert('Login Successful');
+        localStorage.setItem(
+            'role',
+            response.data.role
+        );
 
-            if(response.data.role === 'ADMIN') {
+        localStorage.setItem(
+            'userId',
+            response.data.userId
+        );
 
-                window.location.href='/admin';
+        alert('Login Successful');
 
-            } else if(response.data.role === 'OFFICER') {
+        if(response.data.role === 'ADMIN') {
 
-                window.location.href='/officer';
+            window.location.href = '/admin';
 
-            } else {
+        } else if(response.data.role === 'OFFICER') {
 
-                window.location.href='/complaint';
-            }
+            window.location.href = '/officer';
 
-        } catch(error) {
+        } else {
 
-    console.log(error);
+            window.location.href = '/complaint';
+        }
 
-    alert(
-        error.response?.data ||
-        'Login Failed'
-    );
-}
-    };
+    } catch(error) {
 
+        console.log(error);
+
+        alert(
+            error.response?.data ||
+            'Login Failed'
+        );
+    }
+};
     return (
 
         <div style={styles.container}>

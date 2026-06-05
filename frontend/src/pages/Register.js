@@ -144,6 +144,7 @@ function Register() {
                         OFFICER
 
                     </option>
+                    <option value="ADMIN">ADMIN</option>
 
                 </select>
 
