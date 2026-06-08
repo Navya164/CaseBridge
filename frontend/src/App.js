@@ -17,6 +17,7 @@ import ManageUsers from './pages/ManageUsers';
 import AssignOfficer from './pages/AssignOfficer';
 import PermissionManagement from './pages/PermissionManagement';
 import AdminPermission from './pages/AdminPermission';
+import OfficerComplaints from './pages/OfficerComplaints';
 
 function App() {
 
@@ -104,6 +105,14 @@ function App() {
     element={
         token && role === 'ADMIN'
         ? <ManageUsers />
+        : <Navigate to="/" />
+    }
+/>
+<Route
+    path="/officer-complaints"
+    element={
+        token && role === 'OFFICER'
+        ? <OfficerComplaints />
         : <Navigate to="/" />
     }
 />

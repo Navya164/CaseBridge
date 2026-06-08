@@ -94,6 +94,19 @@ function Navbar() {
                                         >
                                             Officer Dashboard
                                         </Link>
+                                        <Link
+    to="/officer-complaints"
+    style={{
+        color:'#ffffff',
+        textDecoration:'none',
+        fontWeight:'600',
+        marginRight:'20px'
+    }}
+>
+    Complaints
+</Link>
+        
+    
 
                                     </>
 

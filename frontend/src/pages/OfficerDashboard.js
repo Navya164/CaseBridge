@@ -3,14 +3,21 @@ import axios from 'axios';
 
 function OfficerDashboard() {
 
-    const [complaints, setComplaints] = useState([]);
-    const [evidenceMap, setEvidenceMap] = useState({});
+    const [stats, setStats] = useState({
+
+        total:0,
+        pending:0,
+        progress:0,
+        resolved:0
+    });
 
     useEffect(() => {
-        fetchComplaints();
+
+        loadDashboard();
+
     }, []);
 
-    const fetchComplaints = async () => {
+    const loadDashboard = async () => {
 
         try {
 
@@ -18,228 +25,269 @@ function OfficerDashboard() {
                 'http://localhost:8080/api/complaints'
             );
 
-            setComplaints(response.data);
+            const complaints = response.data;
 
-        } catch(error) {
+            setStats({
 
-            console.log(error);
-        }
-    };
+                total:
+                    complaints.length,
 
-    const reviewEvidence = async (complaintId) => {
+                pending:
+                    complaints.filter(
+                        c => c.status === 'PENDING'
+                    ).length,
 
-        try {
+                progress:
+                    complaints.filter(
+                        c => c.status === 'IN_PROGRESS'
+                    ).length,
 
-            const response = await axios.get(
-                `http://localhost:8080/api/evidence/complaint/${complaintId}`
-            );
-
-            setEvidenceMap({
-                ...evidenceMap,
-                [complaintId]: response.data
+                resolved:
+                    complaints.filter(
+                        c => c.status === 'RESOLVED'
+                    ).length
             });
 
         } catch(error) {
 
             console.log(error);
-            alert('Failed to load evidence');
         }
     };
 
-    const updateStatus = async (complaintId, status) => {
+    const cardStyle = {
 
-        try {
-
-            await axios.put(
-                `http://localhost:8080/api/complaints/${complaintId}/status`,
-                null,
-                {
-                    params:{ status }
-                }
-            );
-
-            alert('Status Updated');
-
-            fetchComplaints();
-
-        } catch(error) {
-
-            console.log(error);
-            alert('Failed to update status');
-        }
+        flex:'1',
+        minWidth:'240px',
+        padding:'30px',
+        borderRadius:'22px',
+        color:'white',
+        boxShadow:'0 10px 25px rgba(0,0,0,0.12)',
+        transition:'0.3s',
+        cursor:'pointer'
     };
 
     return (
 
-        <div style={{ padding:'20px' }}>
+        <div
+            style={{
+                minHeight:'100vh',
+                background:'linear-gradient(to bottom,#eef2ff,#e0e7ff)',
+                padding:'40px'
+            }}
+        >
 
-            <h1>OFFICER DASHBOARD</h1>
+            {/* TITLE */}
 
-            {
-                complaints.map((complaint) => (
+            <h1
+                style={{
+                    fontSize:'44px',
+                    color:'#1e1b4b',
+                    marginBottom:'45px',
+                    fontWeight:'bold'
+                }}
+            >
+                Officer Dashboard
+            </h1>
 
-                    <div
-                        key={complaint.id}
+            {/* TOP SECTION */}
+
+            <div
+                style={{
+                    display:'flex',
+                    gap:'25px',
+                    flexWrap:'wrap'
+                }}
+            >
+
+                {/* TOTAL */}
+
+                <div
+                    title="Total complaints available in the system"
+                    style={{
+                        ...cardStyle,
+                        background:'linear-gradient(to right,#4f46e5,#6366f1)'
+                    }}
+                >
+
+                    <h2>Total Complaints</h2>
+
+                    <h1
                         style={{
-                            border:'1px solid gray',
-                            padding:'20px',
-                            marginBottom:'20px',
-                            borderRadius:'10px'
+                            fontSize:'55px',
+                            marginTop:'15px'
                         }}
                     >
+                        {stats.total}
+                    </h1>
 
-                        <h2>{complaint.title}</h2>
+                </div>
 
-                        <p>{complaint.description}</p>
+                {/* PENDING */}
 
-                        <div style={{ marginTop:'10px' }}>
+                <div
+                    title="Complaints waiting for officer review"
+                    style={{
+                        ...cardStyle,
+                        background:'linear-gradient(to right,#ef4444,#f87171)'
+                    }}
+                >
 
-    <strong>Status:</strong>
+                    <h2>Pending</h2>
 
-    <span
-        style={{
+                    <h1
+                        style={{
+                            fontSize:'55px',
+                            marginTop:'15px'
+                        }}
+                    >
+                        {stats.pending}
+                    </h1>
 
-            marginLeft:'10px',
+                </div>
 
-            padding:'6px 14px',
+                {/* IN PROGRESS */}
 
-            borderRadius:'20px',
+                <div
+                    title="Complaints currently under investigation"
+                    style={{
+                        ...cardStyle,
+                        background:'linear-gradient(to right,#f59e0b,#fbbf24)'
+                    }}
+                >
 
-            fontWeight:'bold',
+                    <h2>In Progress</h2>
 
-            color:'white',
+                    <h1
+                        style={{
+                            fontSize:'55px',
+                            marginTop:'15px'
+                        }}
+                    >
+                        {stats.progress}
+                    </h1>
 
-            fontSize:'14px',
+                </div>
 
-            backgroundColor:
+                {/* RESOLVED */}
 
-                complaint.status === "PENDING"
-                ? "#ef4444"
+                <div
+                    title="Complaints successfully resolved"
+                    style={{
+                        ...cardStyle,
+                        background:'linear-gradient(to right,#22c55e,#4ade80)'
+                    }}
+                >
 
-                : complaint.status === "IN_PROGRESS"
-                ? "#facc15"
+                    <h2>Resolved</h2>
 
-                : complaint.status === "RESOLVED"
-                ? "#22c55e"
+                    <h1
+                        style={{
+                            fontSize:'55px',
+                            marginTop:'15px'
+                        }}
+                    >
+                        {stats.resolved}
+                    </h1>
 
-                : "#6b7280"
-        }}
-    >
+                </div>
 
-        {complaint.status}
+            </div>
 
-    </span>
+            {/* SECOND SECTION */}
 
-</div>
+            <div
+                style={{
+                    marginTop:'45px',
+                    background:'white',
+                    borderRadius:'20px',
+                    padding:'30px',
+                    boxShadow:'0 8px 20px rgba(0,0,0,0.08)'
+                }}
+            >
 
-                        <button
-                            onClick={() =>
-                                reviewEvidence(complaint.id)
-                            }
-                            style={{
-                                padding:'8px 15px',
-                                cursor:'pointer'
-                            }}
-                        >
-                            Review Evidence
-                        </button>
+                <h2
+                    style={{
+                        color:'#1e293b',
+                        marginBottom:'25px'
+                    }}
+                >
+                    Recent Complaint Activity
+                </h2>
 
-                        <br/><br/>
+                <div style={styles.activityItem}>
+                    ✅ 2 complaints moved to RESOLVED today
+                </div>
 
-                        <select
-                            onChange={(e) =>
-                                updateStatus(
-                                    complaint.id,
-                                    e.target.value
-                                )
-                            }
-                            defaultValue=""
-                            style={{
-                                padding:'8px'
-                            }}
-                        >
+                <div style={styles.activityItem}>
+                    🔄 1 new complaint assigned
+                </div>
 
-                            <option value="">
-                                Select Status
-                            </option>
+                <div style={styles.activityItem}>
+                    ⚠️ 4 pending complaints require attention
+                </div>
 
-                            <option value="PENDING">
-                                PENDING
-                            </option>
+            </div>
 
-                            <option value="IN_PROGRESS">
-                                IN_PROGRESS
-                            </option>
+            {/* THIRD SECTION */}
 
-                            <option value="RESOLVED">
-                                RESOLVED
-                            </option>
+            <div
+                style={{
+                    marginTop:'35px',
+                    background:'white',
+                    borderRadius:'20px',
+                    padding:'30px',
+                    boxShadow:'0 8px 20px rgba(0,0,0,0.08)'
+                }}
+            >
 
-                        </select>
+                <h2
+                    style={{
+                        color:'#1e293b',
+                        marginBottom:'25px'
+                    }}
+                >
+                    Priority Alerts
+                </h2>
 
-                        {/* EVIDENCE SECTION */}
+                <div style={styles.alertItem}>
+                    ⚠️ 4 complaints pending for more than 3 days
+                </div>
 
-                        {
-                            evidenceMap[complaint.id] && (
+                <div style={styles.alertItem}>
+                    🚨 High priority cyber complaints detected
+                </div>
 
-                                <div
-                                    style={{
-                                        marginTop:'20px',
-                                        background:'#f4f4f4',
-                                        padding:'15px',
-                                        borderRadius:'8px'
-                                    }}
-                                >
+                <div style={styles.alertItem}>
+                    ⏳ Evidence review pending for multiple cases
+                </div>
 
-                                    <h3>Evidence Files</h3>
-
-                                    {
-                                        evidenceMap[complaint.id].length === 0 ? (
-
-                                            <p>No evidence uploaded</p>
-
-                                        ) : (
-
-                                            evidenceMap[complaint.id].map((file) => (
-
-                                                <div
-                                                    key={file.id}
-                                                    style={{
-                                                        marginBottom:'12px'
-                                                    }}
-                                                >
-
-                                                    <a
-                                                        href={`http://localhost:8080/${file.filePath}`}
-                                                        target="_blank"
-                                                        rel="noreferrer"
-                                                        style={{
-                                                            color:'blue',
-                                                            textDecoration:'underline',
-                                                            fontWeight:'bold'
-                                                        }}
-                                                    >
-
-                                                        {file.fileName}
-
-                                                    </a>
-
-                                                </div>
-
-                                            ))
-                                        )
-                                    }
-
-                                </div>
-                            )
-                        }
-
-                    </div>
-                ))
-            }
+            </div>
 
         </div>
     );
 }
+
+const styles = {
+
+    activityItem:{
+
+        background:'#eef2ff',
+        padding:'16px',
+        borderRadius:'12px',
+        marginBottom:'15px',
+        color:'#312e81',
+        fontWeight:'500'
+    },
+
+    alertItem:{
+
+        background:'#fef2f2',
+        padding:'16px',
+        borderRadius:'12px',
+        marginBottom:'15px',
+        color:'#991b1b',
+        fontWeight:'500'
+    }
+};
 
 export default OfficerDashboard;
