@@ -1,6 +1,7 @@
 package com.casebridge.backend.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 
@@ -16,6 +17,10 @@ public class Complaint {
     private String description;
 
     private String status;
+
+    private String complaintCode;
+
+    private LocalDateTime createdAt;
 
     public Long getId() {
         return id;
@@ -48,4 +53,19 @@ public class Complaint {
     public void setStatus(String status) {
         this.status = status;
     }
+    public String getComplaintCode() {
+    return complaintCode;
+}
+
+public void setComplaintCode(String complaintCode) {
+    this.complaintCode = complaintCode;
+}
+
+public LocalDateTime getCreatedAt() {
+    return createdAt;
+}
+
+public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+}
 }

@@ -18,58 +18,41 @@ function Login() {
 
     const handleLogin = async (e) => {
 
-    e.preventDefault();
+        e.preventDefault();
 
-    try {
+        try {
 
-        const response = await axios.post(
-            'http://localhost:8080/api/users/login',
-            loginData
-        );
+            const response = await axios.post(
+                'http://localhost:8080/api/users/login',
+                loginData
+            );
 
-        console.log("LOGIN RESPONSE:");
-        console.log(response.data);
+            console.log("LOGIN RESPONSE:");
+            console.log(response.data);
 
-        localStorage.setItem(
-            'token',
-            response.data.token
-        );
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('role', response.data.role);
+            localStorage.setItem('userId', response.data.userId);
 
-        localStorage.setItem(
-            'role',
-            response.data.role
-        );
+            alert('Login Successful');
 
-        localStorage.setItem(
-            'userId',
-            response.data.userId
-        );
+            if(response.data.role === 'ADMIN') {
+                window.location.href = '/admin';
 
-        alert('Login Successful');
+            } else if(response.data.role === 'OFFICER') {
+                window.location.href = '/officer';
 
-        if(response.data.role === 'ADMIN') {
+            } else {
+                // ✅ USER GOES TO DASHBOARD (IMPORTANT CHANGE)
+                window.location.href = '/dashboard';
+            }
 
-            window.location.href = '/admin';
-
-        } else if(response.data.role === 'OFFICER') {
-
-            window.location.href = '/officer';
-
-        } else {
-
-            window.location.href = '/complaint';
+        } catch(error) {
+            console.log(error);
+            alert(error.response?.data || 'Login Failed');
         }
+    };
 
-    } catch(error) {
-
-        console.log(error);
-
-        alert(
-            error.response?.data ||
-            'Login Failed'
-        );
-    }
-};
     return (
 
         <div style={styles.container}>
@@ -79,9 +62,7 @@ function Login() {
                 style={styles.card}
             >
 
-               
-
-                <p  style={styles.subtitle}>
+                <p style={styles.subtitle}>
                     COMPLAINT MANAGEMENT SYSTEM
                 </p>
 

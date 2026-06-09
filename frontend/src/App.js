@@ -18,6 +18,8 @@ import AssignOfficer from './pages/AssignOfficer';
 import PermissionManagement from './pages/PermissionManagement';
 import AdminPermission from './pages/AdminPermission';
 import OfficerComplaints from './pages/OfficerComplaints';
+import TrackComplaint from './pages/TrackComplaint';
+import UserDashboard from './pages/UserDashboard';
 
 function App() {
 
@@ -146,6 +148,9 @@ function App() {
         : <Navigate to="/" />
     }
 />
+<Route path="/dashboard" element={<UserDashboard />} />
+<Route path="/track" element={<TrackComplaint />} />
+<Route path="/complaint" element={<ComplaintForm />} />
 
       </Routes>
 
