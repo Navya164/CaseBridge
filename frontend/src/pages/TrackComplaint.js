@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function TrackComplaint() {
@@ -6,8 +6,40 @@ function TrackComplaint() {
     const [code, setCode] = useState('');
     const [complaint, setComplaint] = useState(null);
 
-    const handleTrack = async () => {
+    const [myComplaints, setMyComplaints] = useState([]);
+    const [selectedComplaint, setSelectedComplaint] = useState(null);
+    const loadMyComplaints = async (userId) => {
+
         try {
+
+            const res = await axios.get(
+                `http://localhost:8080/api/complaints/user/${userId}`
+            );
+
+            setMyComplaints(res.data);
+
+        } catch (error) {
+
+            console.log(error);
+
+        }
+    };
+    useEffect(() => {
+
+        const userId = localStorage.getItem("userId");
+
+        if (userId) {
+            loadMyComplaints(userId);
+        }
+
+    }, []);
+
+    
+
+    const handleTrack = async () => {
+
+        try {
+
             const res = await axios.get(
                 `http://localhost:8080/api/complaints/track/${code}`
             );
@@ -15,35 +47,60 @@ function TrackComplaint() {
             setComplaint(res.data);
 
         } catch (err) {
+
             alert('Complaint not found');
             setComplaint(null);
+
         }
     };
 
     const getStepStyle = (step) => {
+
         if (!complaint) return {};
+
         if (complaint.status === step) {
-            return { background: '#22c55e', color: 'white' };
+            return {
+                background: '#22c55e',
+                color: 'white'
+            };
         }
+
         if (
             (complaint.status === 'IN_PROGRESS' && step === 'PENDING') ||
-            (complaint.status === 'RESOLVED')
+            complaint.status === 'RESOLVED'
         ) {
-            return { background: '#3b82f6', color: 'white' };
+            return {
+                background: '#3b82f6',
+                color: 'white'
+            };
         }
-        return { background: '#e5e7eb', color: '#111' };
+
+        return {
+            background: '#e5e7eb',
+            color: '#111'
+        };
     };
 
     return (
-        <div style={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 
-            <div style={{
-                width: '500px',
-                padding: '30px',
-                borderRadius: '15px',
-                background: 'rgba(255,255,255,0.1)',
-                textAlign: 'center'
-            }}>
+        <div
+            style={{
+                minHeight: '100vh',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}
+        >
+
+            <div
+                style={{
+                    width: '1000px',
+                    padding: '30px',
+                    borderRadius: '15px',
+                    background: 'rgba(255,255,255,0.1)',
+                    textAlign: 'center'
+                }}
+            >
 
                 <h2>Track Your Complaint</h2>
 
@@ -74,23 +131,62 @@ function TrackComplaint() {
                     Track
                 </button>
 
-                {/* TIMELINE */}
+                {/* SEARCH RESULT */}
+
                 {complaint && (
+
                     <div style={{ marginTop: '30px' }}>
 
                         <h3>Status: {complaint.status}</h3>
 
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+                        {complaint.reviewAction && (
 
-                            <div style={{ ...stepBox, ...getStepStyle('PENDING') }}>
+                            <p style={{ marginTop: '10px' }}>
+                                <b>Review Action:</b> {complaint.reviewAction}
+                            </p>
+
+                        )}
+
+                        {complaint.officerNote && (
+
+                            <p style={{ marginTop: '10px' }}>
+                                <b>Officer Note:</b> {complaint.officerNote}
+                            </p>
+
+                        )}
+
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                marginTop: '20px'
+                            }}
+                        >
+
+                            <div
+                                style={{
+                                    ...stepBox,
+                                    ...getStepStyle('PENDING')
+                                }}
+                            >
                                 PENDING
                             </div>
 
-                            <div style={{ ...stepBox, ...getStepStyle('IN_PROGRESS') }}>
+                            <div
+                                style={{
+                                    ...stepBox,
+                                    ...getStepStyle('IN_PROGRESS')
+                                }}
+                            >
                                 IN PROGRESS
                             </div>
 
-                            <div style={{ ...stepBox, ...getStepStyle('RESOLVED') }}>
+                            <div
+                                style={{
+                                    ...stepBox,
+                                    ...getStepStyle('RESOLVED')
+                                }}
+                            >
                                 RESOLVED
                             </div>
 
@@ -101,10 +197,128 @@ function TrackComplaint() {
                         </p>
 
                     </div>
+
+                )}
+
+                <hr style={{ marginTop: '40px' }} />
+
+                <h2
+    style={{
+        fontWeight: "900",
+        fontSize: "28px",
+        marginTop: "30px",
+        marginBottom: "20px"
+    }}
+>
+    MY COMPLAINTS
+</h2>
+
+                <table
+    style={{
+        width: "100%",
+        border: "4px double black",
+        borderCollapse: "collapse",
+        marginTop: "20px",
+        fontWeight: "bold"
+    }}
+>
+
+                    <thead>
+
+                        <tr>
+
+                            <th style={tableHeader}>Complaint ID</th>
+<th style={tableHeader}>Title</th>
+<th style={tableHeader}>Status</th>
+<th style={tableHeader}>View</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {myComplaints.map((c) => (
+
+                            <tr key={c.id}>
+
+                                <td style={tableCell}>{c.complaintCode}</td>
+                                <td style={tableCell}>{c.title}</td>
+                                <td style={tableCell}>{c.status}</td>
+                                <td>
+
+                                    <button
+                                        onClick={() =>
+                                            setSelectedComplaint(c)
+                                        }
+                                    >
+                                        View
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                        ))}
+
+                    </tbody>
+
+                </table>
+
+                {/* VIEW DETAILS */}
+
+                {selectedComplaint && (
+
+                    <div
+                        style={{
+                            marginTop: '30px',
+                            padding: '20px',
+                            border: '1px solid #ccc',
+                            borderRadius: '10px',
+                            textAlign: 'left'
+                        }}
+                    >
+
+                        <h3>Complaint Details</h3>
+
+                        <p>
+                            <b>Complaint ID:</b>
+                            {' '}
+                            {selectedComplaint.complaintCode}
+                        </p>
+
+                        <p>
+                            <b>Title:</b>
+                            {' '}
+                            {selectedComplaint.title}
+                        </p>
+
+                        <p>
+                            <b>Status:</b>
+                            {' '}
+                            {selectedComplaint.status}
+                        </p>
+
+                        <p>
+                            <b>Review Action:</b>
+                            {' '}
+                            {selectedComplaint.reviewAction || 'Not Available'}
+                        </p>
+
+                        <p>
+                            <b>Officer Note:</b>
+                            {' '}
+                            {selectedComplaint.officerNote || 'Not Available'}
+                        </p>
+
+                    </div>
+
                 )}
 
             </div>
+
         </div>
+
     );
 }
 
@@ -114,6 +328,20 @@ const stepBox = {
     width: '30%',
     textAlign: 'center',
     fontWeight: 'bold'
+};
+
+const tableHeader = {
+    border: "3px double black",
+    padding: "12px",
+    fontWeight: "bold",
+    textAlign: "center"
+};
+
+const tableCell = {
+    border: "2px solid black",
+    padding: "10px",
+    textAlign: "center",
+    fontWeight: "bold"
 };
 
 export default TrackComplaint;

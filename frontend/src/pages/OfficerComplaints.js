@@ -10,6 +10,9 @@ function OfficerComplaints() {
     const [updatedStatus, setUpdatedStatus] = useState('');
     const [evidence, setEvidence] = useState([]);
 
+    const [reviewAction, setReviewAction] = useState('');
+    const [officerNote, setOfficerNote] = useState('');
+
     useEffect(() => {
         fetchComplaints();
     }, []);
@@ -32,6 +35,8 @@ function OfficerComplaints() {
     const openEditModal = async (complaint) => {
         setSelectedComplaint(complaint);
         setUpdatedStatus(complaint.status);
+        setReviewAction(complaint.reviewAction || '');
+        setOfficerNote(complaint.officerNote || '');
 
         try {
             const response = await axios.get(
@@ -47,24 +52,29 @@ function OfficerComplaints() {
         setSelectedComplaint(null);
         setEvidence([]);
         setUpdatedStatus('');
+        setReviewAction('');
+        setOfficerNote('');
     };
 
     const saveChanges = async () => {
         try {
             await axios.put(
                 `http://localhost:8080/api/complaints/${selectedComplaint.id}/status`,
-                null,
-                { params: { status: updatedStatus } }
+                {
+                    status: updatedStatus,
+                    reviewAction: reviewAction,
+                    officerNote: officerNote
+                }
             );
 
-            alert('Complaint Updated Successfully');
+            alert("Updated Successfully");
 
             closeModal();
             fetchComplaints();
 
         } catch (error) {
             console.log(error);
-            alert('Failed To Update');
+            alert("Update Failed");
         }
     };
 
@@ -171,10 +181,64 @@ function OfficerComplaints() {
                                 {selectedComplaint.description}
                             </p>
 
-                            {/* FIXED HERE 👇 */}
-                            <p style={{ color:'#4f46e5', fontWeight:'bold' }}>
+                            <p style={{ color: '#4f46e5', fontWeight: 'bold' }}>
                                 ID: {selectedComplaint.complaintCode}
                             </p>
+
+                            {/* REVIEW ACTION */}
+                            <div style={{ marginTop: '20px' }}>
+
+                                <label style={{
+                                    fontWeight: '700',
+                                    display: 'block',
+                                    marginBottom: '8px',
+                                    color: '#111827'
+                                }}>
+                                    Review Action
+                                </label>
+
+                                <select
+                                    value={reviewAction}
+                                    onChange={(e) => setReviewAction(e.target.value)}
+                                    style={{
+                                        width: '100%',
+                                        padding: '10px',
+                                        borderRadius: '8px',
+                                        border: '1px solid #d1d5db',
+                                        outline: 'none',
+                                        marginTop: '6px'
+                                    }}
+                                >
+                                    <option value="">Select Action</option>
+                                    <option value="NEEDS_MORE_EVIDENCE">Needs More Evidence</option>
+                                    <option value="REJECTED">Rejected</option>
+                                    <option value="ESCALATED">Escalated</option>
+                                </select>
+
+                            </div>
+
+                            {/* OFFICER NOTE */}
+                            <div style={{ marginTop: '20px' }}>
+                                <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '8px' }}>
+                                    Officer Note
+                                </label>
+
+                                <textarea
+                                    value={officerNote}
+                                    onChange={(e) => setOfficerNote(e.target.value)}
+                                    placeholder="Write detailed officer remarks..."
+                                    style={{
+                                        width: '100%',
+                                        minHeight: '120px',
+                                        padding: '12px',
+                                        borderRadius: '10px',
+                                        border: '1px solid #ccc',
+                                        fontSize: '14px',
+                                        resize: 'vertical',
+                                        outline: 'none'
+                                    }}
+                                />
+                            </div>
 
                             {/* STATUS */}
                             <div style={{ marginTop: '20px' }}>
@@ -184,9 +248,7 @@ function OfficerComplaints() {
 
                                 <select
                                     value={updatedStatus}
-                                    onChange={(e) =>
-                                        setUpdatedStatus(e.target.value)
-                                    }
+                                    onChange={(e) => setUpdatedStatus(e.target.value)}
                                     style={styles.dropdown}
                                 >
                                     <option value="PENDING">PENDING</option>

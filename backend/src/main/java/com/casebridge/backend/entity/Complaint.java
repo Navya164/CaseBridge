@@ -19,8 +19,11 @@ public class Complaint {
     private String status;
 
     private String complaintCode;
+    private Long userId;
 
     private LocalDateTime createdAt;
+    private String reviewAction;
+    private String officerNote;
 
     public Long getId() {
         return id;
@@ -60,6 +63,13 @@ public class Complaint {
 public void setComplaintCode(String complaintCode) {
     this.complaintCode = complaintCode;
 }
+public Long getUserId() {
+    return userId;
+}
+
+public void setUserId(Long userId) {
+    this.userId = userId;
+}
 
 public LocalDateTime getCreatedAt() {
     return createdAt;
@@ -67,5 +77,20 @@ public LocalDateTime getCreatedAt() {
 
 public void setCreatedAt(LocalDateTime createdAt) {
     this.createdAt = createdAt;
+}
+public String getReviewAction() {
+    return reviewAction;
+}
+
+public void setReviewAction(String reviewAction) {
+    this.reviewAction = reviewAction;
+}
+
+public String getOfficerNote() {
+    return officerNote;
+}
+
+public void setOfficerNote(String officerNote) {
+    this.officerNote = officerNote;
 }
 }

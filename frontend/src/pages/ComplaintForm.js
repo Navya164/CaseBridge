@@ -38,60 +38,74 @@ function ComplaintForm() {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+    e.preventDefault();
 
-        try {
+    try {
 
-            // 1️⃣ CREATE COMPLAINT
-            const complaintResponse = await axios.post(
-                'http://localhost:8080/api/complaints',
-                complaintData
-            );
+        const userId = localStorage.getItem("userId");
 
-            // ✔ SAFE RESPONSE HANDLING
-            const complaintId = complaintResponse.data.id;
-            const complaintCode = complaintResponse.data.complaintCode;
+        console.log("USER ID =", userId);
 
-            if (!complaintId || !complaintCode) {
-                alert("Backend did not return complaint ID or code!");
-                return;
-            }
+        const complaintPayload = {
+            ...complaintData,
+            userId: Number(userId)
+        };
 
-            // 2️⃣ UPLOAD EVIDENCE
-            if (file) {
-                const formData = new FormData();
-                formData.append('file', file);
+        console.log("PAYLOAD =", complaintPayload);
 
-                await axios.post(
-                    `http://localhost:8080/api/evidence/${complaintId}`,
-                    formData,
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    }
-                );
-            }
+        // CREATE COMPLAINT
+        const complaintResponse = await axios.post(
+            'http://localhost:8080/api/complaints',
+            complaintPayload
+        );
 
-            // 3️⃣ SUCCESS MESSAGE
-            alert(
-                `Complaint Registered Successfully!\nYour Complaint ID: ${complaintCode}`
-            );
+        // SAFE RESPONSE HANDLING
+        const complaintId = complaintResponse.data.id;
+        const complaintCode = complaintResponse.data.complaintCode;
 
-            // 4️⃣ RESET FORM
-            setComplaintData({
-                title: '',
-                description: '',
-                status: 'PENDING'
-            });
-
-            setFile(null);
-
-        } catch (error) {
-            console.log(error);
-            alert('Submission Failed');
+        if (!complaintId || !complaintCode) {
+            alert("Backend did not return complaint ID or code!");
+            return;
         }
-    };
+
+        // UPLOAD EVIDENCE
+        if (file) {
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            await axios.post(
+                `http://localhost:8080/api/evidence/${complaintId}`,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+            );
+        }
+
+        // SUCCESS
+        alert(
+            `Complaint Registered Successfully!\nYour Complaint ID: ${complaintCode}`
+        );
+
+        // RESET FORM
+        setComplaintData({
+            title: '',
+            description: '',
+            status: 'PENDING'
+        });
+
+        setFile(null);
+
+    } catch (error) {
+
+        console.log(error);
+        alert('Submission Failed');
+
+    }
+};
 
     return (
         <div style={{

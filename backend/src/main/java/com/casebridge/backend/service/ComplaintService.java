@@ -17,7 +17,11 @@ public class ComplaintService {
     // CREATE COMPLAINT
     public Complaint createComplaint(Complaint complaint) {
 
-        String code = "CB-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        String code = "CB-" + UUID.randomUUID()
+                .toString()
+                .substring(0, 8)
+                .toUpperCase();
+
         complaint.setComplaintCode(code);
 
         return complaintRepository.save(complaint);
@@ -28,23 +32,45 @@ public class ComplaintService {
         return complaintRepository.findAll();
     }
 
-    // UPDATE STATUS
-    public Complaint updateStatus(Long id, String status) {
+    // UPDATE STATUS + REVIEW ACTION + OFFICER NOTE
+    public Complaint updateStatus(Long id, String status, String reviewAction, String officerNote) {
 
-        Complaint complaint = complaintRepository.findById(id)
-                .orElseThrow();
+    Complaint complaint = complaintRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Complaint not found"));
 
-        complaint.setStatus(status);
+    complaint.setStatus(status);
 
-        return complaintRepository.save(complaint);
-    }
+    // IMPORTANT: force save values properly
+    complaint.setReviewAction(reviewAction);
+    complaint.setOfficerNote(officerNote);
 
-    // SEARCH
+    return complaintRepository.save(complaint);
+}
+
+    // SEARCH BY TITLE
     public List<Complaint> searchByTitle(String keyword) {
         return complaintRepository.findByTitleContaining(keyword);
     }
 
+    // TRACK BY CODE
     public Complaint trackByCode(String code) {
-    return complaintRepository.findByComplaintCode(code);
+        return complaintRepository.findByComplaintCode(code);
+    }
+
+    // OPTIONAL: UPDATE FULL COMPLAINT
+    public Complaint updateComplaint(Long id, Complaint request) {
+
+        Complaint complaint = complaintRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Complaint not found"));
+
+        complaint.setTitle(request.getTitle());
+        complaint.setDescription(request.getDescription());
+        complaint.setStatus(request.getStatus());
+
+        return complaintRepository.save(complaint);
+    }
+
+    public List<Complaint> getComplaintsByUser(Long userId) {
+    return complaintRepository.findByUserId(userId);
 }
 }

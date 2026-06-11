@@ -12,4 +12,5 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
     Complaint findByComplaintCode(String complaintCode);
 
     List<Complaint> findByTitleContaining(String keyword);
+    List<Complaint> findByUserId(Long userId);
 }
