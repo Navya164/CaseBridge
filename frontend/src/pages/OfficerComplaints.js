@@ -12,6 +12,7 @@ function OfficerComplaints() {
 
     const [reviewAction, setReviewAction] = useState('');
     const [officerNote, setOfficerNote] = useState('');
+    const [history, setHistory] = useState([]);
 
     useEffect(() => {
         fetchComplaints();
@@ -46,11 +47,22 @@ function OfficerComplaints() {
         } catch (error) {
             console.log(error);
         }
+        try {
+    const historyResponse = await axios.get(
+        `http://localhost:8080/api/complaints/${complaint.id}/history`
+    );
+
+    setHistory(historyResponse.data);
+
+} catch (error) {
+    console.log(error);
+}
     };
 
     const closeModal = () => {
         setSelectedComplaint(null);
         setEvidence([]);
+        setHistory([]);
         setUpdatedStatus('');
         setReviewAction('');
         setOfficerNote('');
@@ -281,6 +293,76 @@ function OfficerComplaints() {
                                 }
                             </div>
 
+                            {/* AUDIT TRAIL */}
+
+<div style={{ marginTop: '25px' }}>
+
+    <h3>Complaint History</h3>
+
+    {
+        history.length === 0 ? (
+
+            <p>No History Available</p>
+
+        ) : (
+
+            <table
+    style={{
+        width: '100%',
+        borderCollapse: 'collapse',
+        marginTop: '10px',
+        tableLayout: 'fixed'
+    }}
+>
+                <thead>
+                    <tr>
+                        <th style={styles.tableHeader}>Date</th>
+                        <th style={styles.tableHeader}>Action</th>
+                        <th style={styles.tableHeader}>Note</th>
+                        <th style={styles.tableHeader}>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {
+                        history.map((item) => (
+
+                            <tr key={item.id}>
+
+                                <td style={styles.tableCell}>
+                                    {
+                                        new Date(item.updatedAt)
+                                        .toLocaleString()
+                                    }
+                                </td>
+
+                                <td style={styles.tableCell}>
+                                    {item.reviewAction}
+                                </td>
+
+                                <td style={styles.tableCell}>
+                                    {item.officerNote}
+                                </td>
+
+                                <td style={styles.tableCell}>
+                                    {item.status}
+                                </td>
+
+                            </tr>
+
+                        ))
+                    }
+
+                </tbody>
+
+            </table>
+
+        )
+    }
+
+</div>
+
                             {/* ACTIONS */}
                             <div style={styles.modalButtons}>
 
@@ -325,7 +407,16 @@ const styles = {
     resolvedBadge: { background: '#22c55e', color: 'white', padding: '5px 10px', borderRadius: '12px' },
     editButton: { padding: '10px 16px', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' },
     overlay: { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center' },
-    modal: { background: 'white', padding: '30px', borderRadius: '15px', width: '450px' },
+    modal: {
+    background: 'white',
+    padding: '30px',
+    borderRadius: '15px',
+
+    width: '850px',      // wider modal
+
+    maxHeight: '90vh',   // scroll if content grows
+    overflowY: 'auto'
+},
     modalTitle: { marginBottom: '10px', color: '#1e1b4b' },
     modalDescription: { color: '#475569' },
     modalLabel: { fontWeight: 'bold' },
@@ -333,6 +424,19 @@ const styles = {
     evidenceLink: { color: '#4f46e5', display: 'block', marginTop: '8px' },
     modalButtons: { display: 'flex', gap: '10px', marginTop: '20px' },
     saveButton: { flex: 1, padding: '10px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px' },
+    tableHeader: {
+    border: '1px solid #ddd',
+    padding: '8px',
+    background: '#4f46e5',
+    color: 'white'
+},
+
+tableCell: {
+    border: '1px solid #ddd',
+    padding: '10px',
+    fontSize: '14px',
+    verticalAlign: 'top'
+},
     cancelButton: { flex: 1, padding: '10px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '8px' }
 };
 

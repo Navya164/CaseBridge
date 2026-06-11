@@ -1,14 +1,16 @@
 package com.casebridge.backend.controller;
 
 import com.casebridge.backend.entity.Complaint;
+import com.casebridge.backend.entity.ComplaintHistory;
+import com.casebridge.backend.repository.ComplaintHistoryRepository;
 import com.casebridge.backend.service.ComplaintService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/complaints")
@@ -18,11 +20,17 @@ public class ComplaintController {
     @Autowired
     private ComplaintService complaintService;
 
+    @Autowired
+    private ComplaintHistoryRepository historyRepository;
+
     // CREATE COMPLAINT
     @PostMapping
     public Complaint createComplaint(@RequestBody Complaint complaint) {
+
         System.out.println("USER ID RECEIVED = " + complaint.getUserId());
+
         complaint.setCreatedAt(LocalDateTime.now());
+
         return complaintService.createComplaint(complaint);
     }
 
@@ -32,50 +40,61 @@ public class ComplaintController {
         return complaintService.getAllComplaints();
     }
 
-    // UPDATE STATUS + REVIEW ACTION + NOTE
+    // GET COMPLAINT HISTORY (AUDIT TRAIL)
+    @GetMapping("/{id}/history")
+    public List<ComplaintHistory> getComplaintHistory(
+            @PathVariable Long id) {
 
-@PutMapping("/{id}/status")
-public ResponseEntity<?> updateStatus(
-        @PathVariable Long id,
-        @RequestBody Complaint request
-) {
+        return historyRepository
+                .findByComplaint_IdOrderByUpdatedAtDesc(id);
+    }
 
-    Complaint updated = complaintService.updateStatus(
-            id,
-            request.getStatus(),
-            request.getReviewAction(),
-            request.getOfficerNote()
-    );
+    // UPDATE STATUS + REVIEW ACTION + OFFICER NOTE
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> updateStatus(
+            @PathVariable Long id,
+            @RequestBody Complaint request) {
 
-    return ResponseEntity.ok(updated);
-}
+        Complaint updated = complaintService.updateStatus(
+                id,
+                request.getStatus(),
+                request.getReviewAction(),
+                request.getOfficerNote()
+        );
+
+        return ResponseEntity.ok(updated);
+    }
 
     // SEARCH BY TITLE
     @GetMapping("/search/{keyword}")
-    public List<Complaint> searchComplaints(@PathVariable String keyword) {
+    public List<Complaint> searchComplaints(
+            @PathVariable String keyword) {
+
         return complaintService.searchByTitle(keyword);
     }
 
-    // TRACK BY CODE
+    // TRACK BY COMPLAINT CODE
     @GetMapping("/track/{code}")
-    public Complaint trackComplaint(@PathVariable String code) {
+    public Complaint trackComplaint(
+            @PathVariable String code) {
+
         return complaintService.trackByCode(code);
     }
+
+    // GET USER COMPLAINTS
     @GetMapping("/user/{userId}")
-public List<Complaint> getUserComplaints(
-        @PathVariable Long userId
-) {
-    return complaintService.getComplaintsByUser(userId);
-}
+    public List<Complaint> getUserComplaints(
+            @PathVariable Long userId) {
+
+        return complaintService.getComplaintsByUser(userId);
+    }
 
     // UPDATE FULL COMPLAINT
     @PutMapping("/{id}/update")
     public Complaint updateComplaint(
             @PathVariable Long id,
-            @RequestBody Complaint request
-    ) {
+            @RequestBody Complaint request) {
+
         return complaintService.updateComplaint(id, request);
     }
-
-    
 }
