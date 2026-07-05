@@ -1,9 +1,7 @@
 # 🛡️ CaseBridge
-** Secure Complaint & Case Management System**
+**Secure Complaint & Case Management System**
 
 CaseBridge is a secure web-based complaint and case management platform designed to demonstrate modern web application security principles. The application enables secure complaint registration, evidence management, role-based access control, and permission-based authorization while protecting sensitive user information through industry-standard authentication and password security mechanisms.
-
-Developed as part of my internship at **NLC India Limited**, the project focuses on implementing practical security controls commonly used in enterprise web applications.
 
 
 
@@ -80,9 +78,8 @@ Passwords are protected using BCrypt Hashing.
 
 Instead of storing passwords directly,
 
-```
 Password
-```
+
 
 they are stored as
 
@@ -261,10 +258,4 @@ Audit logs improve accountability and help monitor critical system operations.
 
 
 
-# Developed During Internship
 
-**NLC India Limited**
-
-**Domain:** Web Application Security & Access Management
-
-**Technology Stack:** React • Spring Boot • Spring Security • JWT • BCrypt • MySQL
