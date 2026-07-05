@@ -1,5 +1,5 @@
 # 🛡️ CaseBridge
-## Secure Complaint & Case Management System
+-**> Secure Complaint & Case Management System**
 
 CaseBridge is a secure web-based complaint and case management platform designed to demonstrate modern web application security principles. The application enables secure complaint registration, evidence management, role-based access control, and permission-based authorization while protecting sensitive user information through industry-standard authentication and password security mechanisms.
 
