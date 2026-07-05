@@ -1,5 +1,5 @@
 # 🛡️ CaseBridge
--**> Secure Complaint & Case Management System**
+** Secure Complaint & Case Management System**
 
 CaseBridge is a secure web-based complaint and case management platform designed to demonstrate modern web application security principles. The application enables secure complaint registration, evidence management, role-based access control, and permission-based authorization while protecting sensitive user information through industry-standard authentication and password security mechanisms.
 
@@ -41,11 +41,11 @@ Permission Validation
 REST APIs
    │
 MySQL Database
-```
+
 
 Every incoming request is authenticated before business logic is executed. Authorization checks ensure that users can only access resources they are permitted to use.
 
----
+
 
   **Authentication**
 
@@ -72,9 +72,9 @@ The application uses JWT for stateless authentication.
 - Secure API communication
 - Reduced server memory usage
 
----
 
-# 🔑 Password Security
+
+#  Password Security
 
 Passwords are protected using BCrypt Hashing.
 
@@ -86,9 +86,9 @@ Password
 
 they are stored as
 
-```
+
 $2a$10$...
-```
+
 
 Each password is hashed with a unique random salt, ensuring that even identical passwords produce different hashes.
 
@@ -101,7 +101,7 @@ During login,
 
 No password decryption is ever performed.
 
----
+
 
 #  Role-Based Access Control (RBAC)
 
@@ -130,7 +130,7 @@ The system supports three different user roles.
 
 Each role is redirected to its dedicated dashboard after successful authentication.
 
----
+
 
 #  Permission-Based Access Control (PBAC)
 
@@ -243,26 +243,7 @@ Audit logs improve accountability and help monitor critical system operations.
 - BCrypt
 - Spring Security
 
-### Tools
 
-- Git
-- GitHub
-- Maven
-- Postman
-
----
-
-#  Key Learning Outcomes
-
-Through this project I gained practical experience in
-
-- Secure Authentication Mechanisms
-- Password Hashing Techniques
-- REST API Development
-- Access Control Models (RBAC & PBAC)
-- Spring Security Configuration
-- JWT Token Management
-- Secure Backend Development
 
 
 #  Future Security Enhancements
@@ -278,7 +259,7 @@ Through this project I gained practical experience in
 - Secure File Malware Scanning
 - Security Monitoring Dashboard
 
----
+
 
 #  Developed During Internship
 
